@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve Static Frontend Files
-const frontendPath = path.join(__dirname, "../frontend");
+const frontendPath = path.join(__dirname, "../");
 app.use(express.static(frontendPath));
 
 // Connect to MongoDB
