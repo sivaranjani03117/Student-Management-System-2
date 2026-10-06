@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Students - Student Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">🎓</div>
+        <div class="sidebar-title">
+          <h2>SMS Portal</h2>
+          <p>College System</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-link">
+          <span class="icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="students.html" class="nav-link active">
+          <span class="icon">👨‍🎓</span>
+          <span>Students</span>
+        </a>
+        <a href="attendance.html" class="nav-link">
+          <span class="icon">📋</span>
+          <span>Attendance</span>
+        </a>
+        <a href="marks.html" class="nav-link">
+          <span class="icon">📝</span>
+          <span>Marks</span>
+        </a>
+        <a href="profile.html" class="nav-link">
+          <span class="icon">👤</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="user-avatar">A</div>
+          <div class="user-info">
+            <div class="user-name">Admin User</div>
+            <div class="user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn-logout-sidebar" onclick="logout()">
+          <span>🚪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>Student Directory & Management</h1>
+          <p>Add, view, edit, and delete student records in MongoDB</p>
+        </div>
+        <div class="topbar-actions">
+          <span class="badge badge-primary" id="studentCountBadge">0 Students</span>
+        </div>
+      </header>
+
+      <!-- Page Body -->
+      <div class="page-body">
+
+        <!-- Add Student Form Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>➕</span> Add New Student Record
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="studentForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="studentId">Student ID <span class="required">*</span></label>
+                  <input type="text" id="studentId" placeholder="e.g. STU-1001" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="name">Full Name <span class="required">*</span></label>
+                  <input type="text" id="name" placeholder="e.g. Rahul Sharma" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="department">Department <span class="required">*</span></label>
+                  <select id="department" required>
+                    <option value="">-- Select Department --</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Information Technology">Information Technology</option>
+                    <option value="Electronics & Communication">Electronics & Communication</option>
+                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                    <option value="Civil Engineering">Civil Engineering</option>
+                    <option value="Electrical Engineering">Electrical Engineering</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="year">Year of Study <span class="required">*</span></label>
+                  <select id="year" required>
+                    <option value="">-- Select Year --</option>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Email Address <span class="required">*</span></label>
+                  <input type="email" id="email" placeholder="e.g. rahul@example.com" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="phone">Phone Number <span class="required">*</span></label>
+                  <input type="tel" id="phone" placeholder="e.g. +91 9876543210" required>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">Clear Fields</button>
+                <button type="submit" id="addStudentBtn" class="btn btn-primary">Add Student</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Students List Table Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📋</span> Enrolled Students List
+            </div>
+            <div>
+              <input 
+                type="text" 
+                id="studentSearch" 
+                placeholder="🔍 Search by ID, Name, Dept..." 
+                style="width: 260px; padding: 6px 12px; font-size: 13px;"
+              >
+            </div>
+          </div>
+
+          <div class="card-body" style="padding: 0;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Year</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="studentsTbody">
+                  <tr>
+                    <td colspan="7" style="text-align: center; padding: 24px;">Loading students...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Edit Student Modal -->
+  <div class="modal-overlay" id="editStudentModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">✏️ Edit Student Details</h3>
+        <button class="modal-close" onclick="closeEditStudentModal()">&times;</button>
+      </div>
+      <form onsubmit="handleUpdateStudent(event)">
+        <div class="modal-body">
+          <input type="hidden" id="editStudentMongoId">
+          
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editStudentId">Student ID <span class="required">*</span></label>
+            <input type="text" id="editStudentId" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editName">Full Name <span class="required">*</span></label>
+            <input type="text" id="editName" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editDepartment">Department <span class="required">*</span></label>
+            <select id="editDepartment" required>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Information Technology">Information Technology</option>
+              <option value="Electronics & Communication">Electronics & Communication</option>
+              <option value="Mechanical Engineering">Mechanical Engineering</option>
+              <option value="Civil Engineering">Civil Engineering</option>
+              <option value="Electrical Engineering">Electrical Engineering</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editYear">Year <span class="required">*</span></label>
+            <select id="editYear" required>
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editEmail">Email <span class="required">*</span></label>
+            <input type="email" id="editEmail" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editPhone">Phone <span class="required">*</span></label>
+            <input type="tel" id="editPhone" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeEditStudentModal()">Cancel</button>
+          <button type="submit" id="updateStudentBtn" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="script.js"></script>
+</body>
+</html>

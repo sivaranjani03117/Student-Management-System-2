@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Tracking - Student Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">🎓</div>
+        <div class="sidebar-title">
+          <h2>SMS Portal</h2>
+          <p>College System</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-link">
+          <span class="icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="students.html" class="nav-link">
+          <span class="icon">👨‍🎓</span>
+          <span>Students</span>
+        </a>
+        <a href="attendance.html" class="nav-link active">
+          <span class="icon">📋</span>
+          <span>Attendance</span>
+        </a>
+        <a href="marks.html" class="nav-link">
+          <span class="icon">📝</span>
+          <span>Marks</span>
+        </a>
+        <a href="profile.html" class="nav-link">
+          <span class="icon">👤</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="user-avatar">A</div>
+          <div class="user-info">
+            <div class="user-name">Admin User</div>
+            <div class="user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn-logout-sidebar" onclick="logout()">
+          <span>🚪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>Student Attendance Tracker</h1>
+          <p>Record classes, auto-calculate percentages, and monitor 75% threshold</p>
+        </div>
+        <div class="topbar-actions">
+          <span class="badge badge-primary" id="attendanceCountBadge">0 Records</span>
+        </div>
+      </header>
+
+      <!-- Page Body -->
+      <div class="page-body">
+
+        <!-- Attendance Form Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>✍️</span> Record Student Attendance
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="attendanceForm">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="attendanceStudentSelect">Choose Enrolled Student (Optional)</label>
+                  <select id="attendanceStudentSelect">
+                    <option value="">-- Choose from Students List --</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="attendanceCustomStudentId">Or Enter Student ID <span class="required">*</span></label>
+                  <input type="text" id="attendanceCustomStudentId" placeholder="e.g. STU-1001">
+                </div>
+
+                <div class="form-group">
+                  <label for="attendanceStudentName">Student Name <span class="required">*</span></label>
+                  <input type="text" id="attendanceStudentName" placeholder="e.g. Rahul Sharma" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="totalClasses">Total Classes Conducted <span class="required">*</span></label>
+                  <input type="number" id="totalClasses" min="1" placeholder="e.g. 50" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="attendedClasses">Attended Classes <span class="required">*</span></label>
+                  <input type="number" id="attendedClasses" min="0" placeholder="e.g. 34" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="attendancePercentagePreview">Calculated Attendance % (Auto)</label>
+                  <input 
+                    type="text" 
+                    id="attendancePercentagePreview" 
+                    placeholder="Auto-calculated as (Attended/Total)*100" 
+                    readonly 
+                    style="font-weight: 700; color: var(--primary); background-color: var(--primary-light);"
+                  >
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">Clear</button>
+                <button type="submit" id="addAttendanceBtn" class="btn btn-primary">Save Attendance</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Attendance Records Table Card -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>📋</span> Attendance Log in MongoDB
+            </div>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Total Classes</th>
+                    <th>Attended Classes</th>
+                    <th>Percentage</th>
+                    <th>75% Compliance</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="attendanceTbody">
+                  <tr>
+                    <td colspan="7" style="text-align: center; padding: 24px;">Loading attendance records...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Low Attendance Warning / Status Popup Modal -->
+  <div class="modal-overlay" id="attendanceWarningModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Attendance Status & Report</h3>
+        <button class="modal-close" onclick="closeAttendanceWarningModal()">&times;</button>
+      </div>
+      <div class="modal-body warning-popup">
+        <div class="warning-icon" id="warningModalIcon">⚠</div>
+        <h2 class="warning-title" id="warningModalTitle">Warning! Low Attendance</h2>
+        <div class="warning-percentage" id="warningModalPercentage">0.00%</div>
+        <div class="warning-text" id="warningModalText">
+          Your attendance is below the required 75%.
+        </div>
+        <div class="warning-calculation-box" id="warningModalCalcBox">
+          <!-- Mathematical plan populated dynamically -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="closeAttendanceWarningModal()">I Understand</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Attendance Modal -->
+  <div class="modal-overlay" id="editAttendanceModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">✏️ Edit Attendance Record</h3>
+        <button class="modal-close" onclick="closeEditAttendanceModal()">&times;</button>
+      </div>
+      <form onsubmit="handleUpdateAttendance(event)">
+        <div class="modal-body">
+          <input type="hidden" id="editAttendanceMongoId">
+          
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editAttendanceStudentId">Student ID <span class="required">*</span></label>
+            <input type="text" id="editAttendanceStudentId" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editAttendanceStudentName">Student Name <span class="required">*</span></label>
+            <input type="text" id="editAttendanceStudentName" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editTotalClasses">Total Classes <span class="required">*</span></label>
+            <input type="number" id="editTotalClasses" min="1" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label for="editAttendedClasses">Attended Classes <span class="required">*</span></label>
+            <input type="number" id="editAttendedClasses" min="0" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeEditAttendanceModal()">Cancel</button>
+          <button type="submit" id="updateAttendanceBtn" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="script.js"></script>
+</body>
+</html>

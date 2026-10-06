@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Student Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">🎓</div>
+        <div class="sidebar-title">
+          <h2>SMS Portal</h2>
+          <p>College System</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-link active">
+          <span class="icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="students.html" class="nav-link">
+          <span class="icon">👨‍🎓</span>
+          <span>Students</span>
+        </a>
+        <a href="attendance.html" class="nav-link">
+          <span class="icon">📋</span>
+          <span>Attendance</span>
+        </a>
+        <a href="marks.html" class="nav-link">
+          <span class="icon">📝</span>
+          <span>Marks</span>
+        </a>
+        <a href="profile.html" class="nav-link">
+          <span class="icon">👤</span>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="user-avatar">A</div>
+          <div class="user-info">
+            <div class="user-name">Admin User</div>
+            <div class="user-role">Administrator</div>
+          </div>
+        </div>
+        <button class="btn-logout-sidebar" onclick="logout()">
+          <span>🚪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1>System Overview Dashboard</h1>
+          <p>Real-time statistics fetched directly from MongoDB database</p>
+        </div>
+        <div class="topbar-actions">
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>MongoDB Connected</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Page Body -->
+      <div class="page-body">
+        <!-- 4 Stat Cards from MongoDB -->
+        <div class="stats-grid">
+          <!-- Total Students -->
+          <div class="stat-card">
+            <div class="stat-icon blue">👨‍🎓</div>
+            <div class="stat-info">
+              <span class="stat-title">Total Students</span>
+              <span class="stat-value" id="totalStudents">0</span>
+              <span class="stat-subtitle">Registered in MongoDB</span>
+            </div>
+          </div>
+
+          <!-- Total Attendance Records -->
+          <div class="stat-card">
+            <div class="stat-icon green">📋</div>
+            <div class="stat-info">
+              <span class="stat-title">Attendance Records</span>
+              <span class="stat-value" id="totalAttendance">0</span>
+              <span class="stat-subtitle">Logged sessions</span>
+            </div>
+          </div>
+
+          <!-- Total Marks Records -->
+          <div class="stat-card">
+            <div class="stat-icon purple">📝</div>
+            <div class="stat-info">
+              <span class="stat-title">Marks Records</span>
+              <span class="stat-value" id="totalMarks">0</span>
+              <span class="stat-subtitle">Subject scores</span>
+            </div>
+          </div>
+
+          <!-- Average Marks -->
+          <div class="stat-card">
+            <div class="stat-icon amber">🎯</div>
+            <div class="stat-info">
+              <span class="stat-title">Average Marks</span>
+              <span class="stat-value" id="averageMarks">0%</span>
+              <span class="stat-subtitle">Across all students</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions & Recent Students -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>⚡</span> Quick Management Shortcuts
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <a href="students.html" class="btn btn-primary">➕ Add / Manage Students</a>
+              <a href="attendance.html" class="btn btn-secondary">📋 Record Attendance</a>
+              <a href="marks.html" class="btn btn-secondary">📝 Enter Student Marks</a>
+              <a href="profile.html" class="btn btn-secondary">👤 View & Edit Profile</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Students Table Preview -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>👨‍🎓</span> Recently Added Students (MongoDB Live Preview)
+            </div>
+            <a href="students.html" class="btn btn-secondary btn-sm">View All Students →</a>
+          </div>
+          <div class="card-body" style="padding: 0;">
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Year</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody id="recentStudentsTbody">
+                  <tr>
+                    <td colspan="5" style="text-align: center; padding: 24px; color: #94a3b8;">
+                      Fetching live data from MongoDB...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+  <script src="script.js"></script>
+</body>
+</html>
